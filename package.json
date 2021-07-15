@@ -1,0 +1,26 @@
+{
+  "name": "vallog",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TinyTany/Vallog.git"
+  },
+  "author": "Kotaro Nishitani",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TinyTany/Vallog/issues"
+  },
+  "homepage": "https://github.com/TinyTany/Vallog#readme",
+  "dependencies": {
+    "@babel/generator": "^7.14.5",
+    "@babel/parser": "^7.14.7",
+    "@babel/template": "^7.14.5",
+    "@babel/traverse": "^7.14.7",
+    "@babel/types": "^7.14.5"
+  }
+}
