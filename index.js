@@ -145,6 +145,12 @@ traverse.default(ast, {
                 path.node.relId = id;
                 return;
             }
+            case 'ArrayExpression': {
+                var id = getId();
+                vallogize(path, id, path.node.elements.map(e => e.relId));
+                path.node.relId = id;
+                return;
+            }
             case 'CallExpression': {
                 var id = getId();
                 var rel = [path.node.callee.relId];
