@@ -127,7 +127,66 @@ function printVals(vals) {
     console.log(require('util').inspect(vals, {colors: true, depth: null}));
 }
 
-//* ---------------------------------------------------------------------------
+// Tool--------------------------------------------------------------------------------
+
+function lineEq(l1, l2) {
+    if (l1.length != l2.length) {
+        return false;
+    }
+    for (var i = 0; i < l1.length; ++i) {
+        if (l1[i] != l2[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+function lineVariation(vals) {
+    var ans = [];
+    vals.forEach(v => {
+        var line = v.line;
+        var res = ans.find(a => lineEq(a.line, line));
+        if (res === undefined) {
+            ans.push({line: line, count: 1});
+        }
+        else {
+            res.count++;
+        }
+    });
+    return ans;
+}
+
+function valueVariation(vals) {
+    var ans = [];
+    vals.forEach(v => {
+        var value = v.val;
+        var res = ans.find(a => a.value === value);
+        if (res === undefined) {
+            ans.push({value: value, count: 1});
+        }
+        else {
+            res.count++;
+        }
+    });
+    return ans;
+}
+
+function typeVariation(vals) {
+    var ans = [];
+    vals.forEach(v => {
+        var type = typeof(v.val);
+        var res = ans.find(a => a.type === type);
+        if (res === undefined) {
+            ans.push({type: type, count: 1});
+        }
+        else {
+            res.count++;
+        }
+    });
+    return ans;
+}
+
+// Reader-------------------------------------------------------------------------
 
 const reader = require('readline').createInterface({
     input: process.stdin,
@@ -138,4 +197,4 @@ async function readline() {
     return new Promise(res => reader.once('line', res));
 }
 
-// ↓ main---------------------------------------------------------------------*/
+// ↓ main---------------------------------------------------------------------
