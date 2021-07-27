@@ -203,8 +203,8 @@ function PassStatAst(val, line, rel) {
 }
 
 const pathToWrite = `${path}.vallog.js`;
-var pre = fs.readFileSync('test_code/vallog-core-pre.js', 'utf-8');
-var post = fs.readFileSync('test_code/vallog-core-post.js', 'utf-8');
+var pre = fs.readFileSync('vallog_core/vallog-core-pre.js', 'utf-8');
+var post = fs.readFileSync('vallog_core/vallog-core-post.js', 'utf-8');
 fs.writeFileSync(pathToWrite, pre);
 fs.appendFileSync(pathToWrite, generate.default(ast).code);
 fs.appendFileSync(pathToWrite, post);
