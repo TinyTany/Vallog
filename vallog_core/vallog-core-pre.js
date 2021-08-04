@@ -186,6 +186,32 @@ function typeVariation(vals) {
     return ans;
 }
 
+function genOf(vs) {
+    var gens = [...new Set(vs.map(v => v.rel[0]).flat())];
+    return vals.filter(v => gens.includes(v.id));
+}
+
+function genOfRec(vs) {
+    if (vs.length == 0) {
+        return [];
+    }
+    var gen = genOf(vs);
+    var ans = [];
+    [
+        ...gen.filter(v => v.rel[0].length == 0),
+        ...genOfRec(gen.filter(v => v.rel[0].length != 0)) 
+    ].forEach(v => {
+        if (!ans.includes(v)) {
+            ans.push(v);
+        }
+    });
+    return ans;
+}
+
+function diff(from, of) {
+    return from.filter(v => !of.includes(v));
+}
+
 // Reader-------------------------------------------------------------------------
 
 const reader = require('readline').createInterface({
