@@ -72,7 +72,7 @@ function doWork(lines) {
         console.log(id); // for debug
         for (var i = 0; i < l.line.length - 1; ++i) {
             var arw = makeArrow(l.line[i], l.line[i+1]);
-            addArrow(arw, arws, id);
+            addArrow(arw, arws, id, l.count);
         }
         l.line.forEach(i => {
             if (lineMax < i) {
@@ -164,21 +164,21 @@ function doWork(lines) {
     console.log(require('util').inspect(arws, {colors: true, depth: null}));
 }
 
-function makeArrowData(arw, id) {
-    return {arrow: arw, count: 1, id: id};
+function makeArrowData(arw, id, count) {
+    return {arrow: arw, count: count, id: id};
 }
 
-function addArrow(arw, arws, id) {
+function addArrow(arw, arws, id, count) {
     var level = 0;
     var direction = null;
     while(true) {
         if (arws[level] == undefined) {
-            arws[level] = [makeArrowData(arw, id)];
+            arws[level] = [makeArrowData(arw, id, count)];
             return;
         }
         var found = arws[level].find(a => arrowEq(a.arrow, arw, true) && a.id == id);
         if (found != undefined) {
-            found.count++;
+            found.count += count;
             return;
         }
         // 現在のlevelでarwを配置しようとすると他のArrowと重なってしまう場合
@@ -206,7 +206,7 @@ function addArrow(arw, arws, id) {
             continue;
         }
         // それ以外の場合（すでに配置されているどのArrowともarwが重ならず、区間的にも含んだり含まれたりしていない場合）
-        arws[level].push(makeArrowData(arw, id));
+        arws[level].push(makeArrowData(arw, id, count));
         return;
     }
 }
