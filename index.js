@@ -166,7 +166,11 @@ traverse.default(ast, {
             }
             case 'MemberExpression': {
                 var id = getId();
-                vallogize(path, id);
+                var rel = undefined;
+                if (path.node.computed) {
+                    rel = [path.node.object.relId, path.node.property.relId];
+                }
+                vallogize(path, id, rel);
                 path.node.relId = id;
                 return;
             }
