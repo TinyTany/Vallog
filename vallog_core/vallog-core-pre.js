@@ -223,6 +223,14 @@ function genOfRec(vs) {
     return ans;
 }
 
+function genLine(vs) {
+    if (vs.length == 0) {
+        return [];
+    }
+    var rels = genOf(vs);
+    return [...vs, ...genLine(rels)];
+}
+
 function diff(from, of) {
     return from.filter(v => !of.includes(v));
 }
