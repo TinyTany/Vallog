@@ -90,7 +90,9 @@ function getVal(obj, line, rel, key) {
     // 以下、objがvallogだった場合の処理
     assertCheck(obj, line);
     ref[key] = obj;
-    if (!isStrict && obj.line[obj.line.length - 1] == line) {
+    if (!isStrict &&
+        obj.line[obj.line.length - 1] == line &&
+        relEq(obj.rel[obj.rel.length - 1], rel.map(x => x.id))) {
         return obj.val;
     }
     obj.line.push(line);
@@ -115,12 +117,25 @@ function pass(obj, line, rel, key) {
     // 以下、objがvallogだった場合の処理
     assertCheck(obj, line);
     ref[key] = obj;
-    if (!isStrict && obj.line[obj.line.length - 1] == line) {
+    if (!isStrict &&
+        obj.line[obj.line.length - 1] == line &&
+        relEq(obj.rel[obj.rel.length - 1], rel.map(x => x.id))) {
         return obj;
     }
     obj.line.push(line);
     obj.rel.push(tmp.map(x => x.id));
     return obj;
+}
+
+function relEq(r1, r2) {
+    if (r1.length != r2.length) {
+        return false;
+    }
+    // 空の配列のときも同じとみなす
+    if (r1.length == 0) {
+        return true;
+    }
+    return r1.every(r => r2.includes(r));
 }
 
 function printVals(vals) {
