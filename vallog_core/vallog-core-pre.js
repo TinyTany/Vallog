@@ -1,3 +1,4 @@
+const generateImage = require('../visualizer');
 var vals = [];
 var ref = [];
 var isStrict = false;
