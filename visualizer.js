@@ -160,8 +160,6 @@ function doWork(lines) {
     const fs = require('fs');
     const buf = c.toBuffer();
     fs.writeFileSync('test.png', buf);
-
-    console.log(require('util').inspect(arws, {colors: true, depth: null}));
 }
 
 function makeArrowData(arw, id, count) {
