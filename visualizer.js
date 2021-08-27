@@ -71,6 +71,9 @@ function doWork(lines) {
         var id = getId();
         console.log(id); // for debug
         for (var i = 0; i < l.line.length - 1; ++i) {
+            if (l.line[i] == l.line[i+1]) {
+                continue;
+            }
             var arw = makeArrow(l.line[i], l.line[i+1]);
             addArrow(arw, arws, id, l.count);
         }
