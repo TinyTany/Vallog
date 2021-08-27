@@ -47,13 +47,15 @@ function makeVallog(obj, line, rel) {
     color = [...new Set(color.flat())];
     var pred = rel.map(x => x.pred);
     pred = [...new Set(pred.flat())];
+    var time = rel.map(x => x.line.length - 1);
     // vallog構造体について
     // lineは配列
     // relは配列の配列で、rel.length == line.length
+    // timeは配列の配列で、time.length == rel.length == time.length
     // vallogはフラグ（常にtrue）
     // colorは色（文字列）の配列
     // predは述語の配列
-    var val = {id: getId(), val: obj, line: [line], rel: [relId], vallog: true, color: color, pred: pred};
+    var val = {id: getId(), val: obj, line: [line], rel: [relId], time: [time], vallog: true, color: color, pred: pred};
     vals.push(val);
     return val;
 }
@@ -98,6 +100,7 @@ function getVal(obj, line, rel, key) {
     }
     obj.line.push(line);
     obj.rel.push(tmp.map(x => x.id));
+    obj.time.push(tmp.map(x => x.line.length - 1));
     return obj.val;
 }
 
@@ -125,6 +128,7 @@ function pass(obj, line, rel, key) {
     }
     obj.line.push(line);
     obj.rel.push(tmp.map(x => x.id));
+    obj.time.push(tmp.map(x => x.line.length - 1));
     return obj;
 }
 
@@ -230,6 +234,20 @@ function genLine(vs) {
     }
     var rels = genOf(vs);
     return [...vs, ...genLine(rels)];
+}
+
+function lineReason(val, time) {
+    var rs = val.rel[time];
+    var ts = val.time[time]; 
+    if (rs.length == 0) {
+        return [val];
+    }
+    var vs = [];
+    for (var i = 0; i < rs.length; ++i) {
+        vs.push(lineReason(vals.find(v => v.id == rs[i]), ts[i]));
+    }
+    vs = [...new Set(vs.flat())];
+    return [val, ...vs];
 }
 
 function diff(from, of) {
