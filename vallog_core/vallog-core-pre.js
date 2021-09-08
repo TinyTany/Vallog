@@ -38,7 +38,7 @@ function assert_noColor(obj, color, line) {
 }
 
 // 引数relはvallogが要素の配列
-function makeVallog(obj, line, rel) {
+function makeVallog(obj, line, rels, vars) {
     if (!Array.isArray(rels)) {
         rels = [];
     }
@@ -52,10 +52,12 @@ function makeVallog(obj, line, rel) {
     // lineは配列
     // relsは配列の配列
     // timesは配列の配列
+    // varsは配列の配列
+    // line.length == rels.length == times.length == vars.length
     // vallogはフラグ（常にtrue）
     // colorは色（文字列）の配列
     // predは述語の配列
-    var val = {id: getId(), val: obj, line: [line], rel: [relId], time: [time], vallog: true, color: color, pred: pred};
+    var val = {id: getId(), val: obj, line: [line], rels: [relId], times: [times], vars: [vars], vallog: true, color: color, pred: pred};
     vals.push(val);
     return val;
 }
@@ -76,7 +78,7 @@ function assertCheck(obj, line) {
     });
 }
 
-function getVal(obj, line, rel, key) {
+function getVal(obj, line, rels, key, vars) {
     if (!Array.isArray(rels)) {
         rels = [];
     }
@@ -85,7 +87,7 @@ function getVal(obj, line, rel, key) {
         // if (tmp.length == 0) {
         //     return obj;
         // }
-        var val = makeVallog(obj, line, tmp);
+        var val = makeVallog(obj, line, tmp, vars);
         assertCheck(val, line);
         ref[key] = val;
         return val.val;
@@ -96,15 +98,17 @@ function getVal(obj, line, rel, key) {
     if (!isStrict &&
         obj.line[obj.line.length - 1] == line &&
         arrayEq(obj.rels[obj.rels.length - 1], rels.map(x => x.id)) &&
+        arrayEq(obj.vars[obj.vars.length - 1], vars)) {
         return obj.val;
     }
     obj.line.push(line);
     obj.rels.push(tmp.map(x => x.id));
     obj.times.push(tmp.map(x => x.line.length - 1));
+    obj.vars.push(vars);
     return obj.val;
 }
 
-function pass(obj, line, rel, key) {
+function pass(obj, line, rels, key, vars) {
     if (!Array.isArray(rels)) {
         rels = [];
     }
@@ -113,7 +117,7 @@ function pass(obj, line, rel, key) {
         // if (tmp.length == 0) {
         //     return obj;
         // }
-        var val = makeVallog(obj, line, tmp);
+        var val = makeVallog(obj, line, tmp, vars);
         assertCheck(val, line);
         ref[key] = val;
         return val;
@@ -124,11 +128,13 @@ function pass(obj, line, rel, key) {
     if (!isStrict &&
         obj.line[obj.line.length - 1] == line &&
         arrayEq(obj.rels[obj.rels.length - 1], rels.map(x => x.id)) &&
+        arrayEq(obj.vars[obj.vars.length - 1], vars)) {
         return obj;
     }
     obj.line.push(line);
     obj.rels.push(tmp.map(x => x.id));
     obj.times.push(tmp.map(x => x.line.length - 1));
+    obj.vars.push(vars);
     return obj;
 }
 
