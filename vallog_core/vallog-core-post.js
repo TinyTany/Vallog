@@ -1,9 +1,8 @@
 
 // ↑ main-----------------------------------------------------------------------------
 
-//*
 (async () => {
-    var input = true;
+    var input = '"Ready"';
     do {
         try {
             printVals(eval(input));
@@ -16,4 +15,3 @@
 
     process.exit();
 })();
-//*/
