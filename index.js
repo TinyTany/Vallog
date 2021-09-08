@@ -82,6 +82,8 @@ traverse.default(ast, {
             }
             case 'AssignmentExpression': {
                 path.node.left.noVallogize = true;
+                // 右辺の値に、左辺の変数名を付与
+                path.node.right.varName = path.node.left.name;
                 return;
             }
             default:
@@ -195,6 +197,15 @@ function vallogize(path, selfId, relIds) {
     }
     var line = path.node.loc.start.line;
     var relIds = (relIds ?? []).filter(k => k != undefined).map(k => types.identifier(`ref['${k}']`));
+
+    var idNames = [];
+    if (path.node.type == 'Identifier') {
+        idNames.push(types.stringLiteral(path.node.name));
+    }
+    if (path.node.varName != undefined) {
+        idNames.push(types.stringLiteral(path.node.varName));
+    }
+
     path.replaceWith(
         types.callExpression(
             types.identifier(`${funcName}`),
@@ -202,7 +213,8 @@ function vallogize(path, selfId, relIds) {
                 path.node,
                 types.numericLiteral(line),
                 types.arrayExpression(relIds),
-                types.stringLiteral(selfId)
+                types.stringLiteral(selfId),
+                types.arrayExpression(idNames)
             ]));
     path.mySkip = true;
 }
@@ -211,8 +223,9 @@ function PassExpAst(val, line, rel) {
     return template.expression.ast(`pass(${val}, ${line}, ${rel})`);
 }
 
+// 仮引数の行を通過したことを記録するための補助関数
 function PassStatAst(val, line, rel) {
-    return template.statement.ast(`pass(${val}, ${line}, ${rel});`);
+    return template.statement.ast(`pass(${val}, ${line}, ${rel}, '_', ['${val}']);`);
 }
 
 const pathToWrite = `${path}.vallog.js`;
