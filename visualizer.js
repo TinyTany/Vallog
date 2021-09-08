@@ -86,7 +86,8 @@ function doWork(lines) {
 
     // arwsのindex範囲を0-indexedにする（一般的な配列に直す）
     var tmp = [];
-    for(var i = 1 - arws.length; i < arws.length; ++i) {
+    // arws.lengthだとうまくいかない（連想配列になっているため？）
+    for(var i = 1 - Object.keys(arws).length; i < Object.keys(arws).length; ++i) {
         if (arws[i]) {
             tmp.push(arws[i]);
         }
@@ -162,7 +163,7 @@ function doWork(lines) {
 
     const fs = require('fs');
     const buf = c.toBuffer();
-    fs.writeFileSync('test.png', buf);
+    fs.writeFileSync(`img/${process.argv[1].split('/').pop()}.png`, buf);
 }
 
 function makeArrowData(arw, id, count) {
