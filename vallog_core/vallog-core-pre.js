@@ -260,6 +260,28 @@ function diff(from, of) {
     return from.filter(v => !of.includes(v));
 }
 
+function findVal(line, name) {
+    var ans = [];
+    vals.forEach(v => {
+        for(var i = 0; i < v.line.length; ++i) {
+            if (v.line[i] == line && v.vars[i].includes(name)) {
+                ans.push(v);
+            }
+        }
+    });
+    return ans;
+}
+
+function lineOfVar(val, name) {
+    var ans = [];
+    for(var i = 0; i < val.line.length; ++i) {
+        if (val.vars[i].includes(name)) {
+            ans.push(val.line[i]);
+        }
+    }
+    return ans;
+}
+
 // Reader-------------------------------------------------------------------------
 
 const reader = require('readline').createInterface({
