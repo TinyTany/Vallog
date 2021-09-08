@@ -73,7 +73,10 @@ traverse.default(ast, {
                 path.node.param.noVallogize = true;
                 return;
             }
-            case 'IfStatement': {
+            case 'IfStatement':
+            case 'WhileStatement':
+            case 'DoWhileStatement':
+            case 'ForStatement': {
                 path.node.test.getValMode = true;
                 return;
             }
