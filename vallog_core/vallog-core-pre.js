@@ -39,19 +39,19 @@ function assert_noColor(obj, color, line) {
 
 // 引数relはvallogが要素の配列
 function makeVallog(obj, line, rel) {
-    if (!Array.isArray(rel)) {
-        rel = [];
+    if (!Array.isArray(rels)) {
+        rels = [];
     }
-    var relId = rel.map(x => x.id);
-    var color = rel.map(x => x.color);
+    var relId = rels.map(x => x.id);
+    var color = rels.map(x => x.color);
     color = [...new Set(color.flat())];
-    var pred = rel.map(x => x.pred);
+    var pred = rels.map(x => x.pred);
     pred = [...new Set(pred.flat())];
-    var time = rel.map(x => x.line.length - 1);
+    var times = rels.map(x => x.line.length - 1);
     // vallog構造体について
     // lineは配列
-    // relは配列の配列で、rel.length == line.length
-    // timeは配列の配列で、time.length == rel.length == time.length
+    // relsは配列の配列
+    // timesは配列の配列
     // vallogはフラグ（常にtrue）
     // colorは色（文字列）の配列
     // predは述語の配列
@@ -77,10 +77,10 @@ function assertCheck(obj, line) {
 }
 
 function getVal(obj, line, rel, key) {
-    if (!Array.isArray(rel)) {
-        rel = [];
+    if (!Array.isArray(rels)) {
+        rels = [];
     }
-    var tmp = rel.filter(x => isVallog(x));
+    var tmp = rels.filter(x => isVallog(x));
     if (!isVallog(obj)) {
         // if (tmp.length == 0) {
         //     return obj;
@@ -95,20 +95,20 @@ function getVal(obj, line, rel, key) {
     ref[key] = obj;
     if (!isStrict &&
         obj.line[obj.line.length - 1] == line &&
-        relEq(obj.rel[obj.rel.length - 1], rel.map(x => x.id))) {
+        arrayEq(obj.rels[obj.rels.length - 1], rels.map(x => x.id)) &&
         return obj.val;
     }
     obj.line.push(line);
-    obj.rel.push(tmp.map(x => x.id));
-    obj.time.push(tmp.map(x => x.line.length - 1));
+    obj.rels.push(tmp.map(x => x.id));
+    obj.times.push(tmp.map(x => x.line.length - 1));
     return obj.val;
 }
 
 function pass(obj, line, rel, key) {
-    if (!Array.isArray(rel)) {
-        rel = [];
+    if (!Array.isArray(rels)) {
+        rels = [];
     }
-    var tmp = rel.filter(x => isVallog(x));
+    var tmp = rels.filter(x => isVallog(x));
     if (!isVallog(obj)) {
         // if (tmp.length == 0) {
         //     return obj;
@@ -123,24 +123,24 @@ function pass(obj, line, rel, key) {
     ref[key] = obj;
     if (!isStrict &&
         obj.line[obj.line.length - 1] == line &&
-        relEq(obj.rel[obj.rel.length - 1], rel.map(x => x.id))) {
+        arrayEq(obj.rels[obj.rels.length - 1], rels.map(x => x.id)) &&
         return obj;
     }
     obj.line.push(line);
-    obj.rel.push(tmp.map(x => x.id));
-    obj.time.push(tmp.map(x => x.line.length - 1));
+    obj.rels.push(tmp.map(x => x.id));
+    obj.times.push(tmp.map(x => x.line.length - 1));
     return obj;
 }
 
-function relEq(r1, r2) {
-    if (r1.length != r2.length) {
+function arrayEq(arr1, arr2) {
+    if (arr1.length != arr2.length) {
         return false;
     }
     // 空の配列のときも同じとみなす
-    if (r1.length == 0) {
+    if (arr1.length == 0) {
         return true;
     }
-    return r1.every(r => r2.includes(r));
+    return arr1.every(e => arr2.includes(e));
 }
 
 function printVals(vals) {
@@ -207,7 +207,7 @@ function typeVariation(vals) {
 }
 
 function genOf(vs) {
-    var gens = [...new Set(vs.map(v => v.rel[0]).flat())];
+    var gens = [...new Set(vs.map(v => v.rels[0]).flat())];
     return vals.filter(v => gens.includes(v.id));
 }
 
@@ -218,8 +218,8 @@ function genOfRec(vs) {
     var gen = genOf(vs);
     var ans = [];
     [
-        ...gen.filter(v => v.rel[0].length == 0),
-        ...genOfRec(gen.filter(v => v.rel[0].length != 0)) 
+        ...gen.filter(v => v.rels[0].length == 0),
+        ...genOfRec(gen.filter(v => v.rels[0].length != 0)) 
     ].forEach(v => {
         if (!ans.includes(v)) {
             ans.push(v);
@@ -236,9 +236,9 @@ function genLine(vs) {
     return [...vs, ...genLine(rels)];
 }
 
-function lineReason(val, time) {
-    var rs = val.rel[time];
-    var ts = val.time[time]; 
+function lineReason(val, times) {
+    var rs = val.rels[times];
+    var ts = val.times[times]; 
     if (rs.length == 0) {
         return [val];
     }
