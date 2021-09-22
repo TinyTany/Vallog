@@ -57,6 +57,11 @@ traverse.default(ast, {
             }
             case 'VariableDeclarator': {
                 path.node.id.noVallogize = true;
+                if (!path.node.init) {
+                    return;
+                }
+                // 右辺の値に、左辺の変数名を付与
+                path.node.init.varName = path.node.id.name;
                 return;
             }
             case 'MemberExpression': {
@@ -84,6 +89,11 @@ traverse.default(ast, {
                 path.node.left.noVallogize = true;
                 // 右辺の値に、左辺の変数名を付与
                 path.node.right.varName = path.node.left.name;
+                return;
+            }
+            case 'ExpressionStatement': {
+                // void関数呼出の返値undefinedなどの不要な追跡値を防止
+                path.node.expression.noVallogize = true;
                 return;
             }
             default:
@@ -118,6 +128,9 @@ traverse.default(ast, {
                     path.get('body').unshiftContainer('body', x);
                     path.get('body.body.0').mySkip = true;
                 });
+                var id = getId();
+                vallogize(path, id);
+                path.node.relId = id;
                 return;
             }
             case 'BinaryExpression': {
